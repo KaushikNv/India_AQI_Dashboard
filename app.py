@@ -11,8 +11,8 @@ st.set_page_config(page_title="India AQI Dashboard", layout="wide")
 # -------------------------------
 # LOAD DATA
 # -------------------------------
-aqi_df = pd.read_csv("aqi_data.csv")
-ev_df = pd.read_csv("ev_data.csv")
+aqi_df = pd.read_csv("aqi_data_small.csv")
+ev_df = pd.read_csv("ev_data_small.csv")
 
 # -------------------------------
 # DATA CLEANING
