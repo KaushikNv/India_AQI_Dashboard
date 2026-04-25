@@ -148,11 +148,11 @@ color_map = {
 st.subheader("EV Adoption vs Air Quality")
 
 fig = px.scatter(
-    color_discrete_map=color_map,
-    filtered_df,
+    filtered_df,  
     x="ev_count",
     y="avg_aqi",
     color="aqi_category",
+    color_discrete_map=color_map,
     hover_name="state",
     title="EV Adoption vs AQI"
 )
