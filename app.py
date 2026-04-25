@@ -128,6 +128,12 @@ st.divider()
 # -------------------------------
 # GLOBAL KPIs
 # -------------------------------
+
+avg_aqi_global = merged_df["avg_aqi"].mean()
+
+most_polluted_global = merged_df.loc[merged_df["avg_aqi"].idxmax()]
+cleanest_global = merged_df.loc[merged_df["avg_aqi"].idxmin()]
+
 st.subheader("🌍 Overall India Insights")
 
 col4, col5, col6 = st.columns(3)
