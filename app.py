@@ -34,7 +34,12 @@ aqi_df["year"] = aqi_df["date"].dt.year
 # -------------------------------
 state_avg = aqi_df.groupby("state")["aqi_value"].mean().reset_index()
 state_avg.rename(columns={"aqi_value": "avg_aqi"}, inplace=True)
+state_counts = aqi_df.groupby("state")["aqi_value"].count().reset_index(name="data_points")
 
+state_summary = state_avg.merge(state_counts, on="state")
+
+# Filter states with enough data
+state_summary_filtered = state_summary[state_summary["data_points"] > 50]
 # -------------------------------
 # EV FILTERING
 # -------------------------------
@@ -94,8 +99,8 @@ if filtered_df.empty:
 # -------------------------------
 # KPI CALCULATIONS
 # -------------------------------
-most_polluted_global = merged_df.loc[merged_df["avg_aqi"].idxmax()]
-cleanest_global = merged_df.loc[merged_df["avg_aqi"].idxmin()]
+most_polluted = state_summary_filtered.loc[state_summary_filtered["avg_aqi"].idxmax()]["state"]
+cleanest = state_summary_filtered.loc[state_summary_filtered["avg_aqi"].idxmin()]["state"]
 avg_aqi_global = merged_df["avg_aqi"].mean()
 
 most_polluted_filtered = filtered_df.loc[filtered_df["avg_aqi"].idxmax()]
@@ -134,9 +139,16 @@ col6.metric("Cleanest", cleanest_global["state"])
 # -------------------------------
 # SCATTER PLOT
 # -------------------------------
+color_map = {
+    "Good": "green",
+    "Moderate": "yellow",
+    "Unhealthy for Sensitive": "orange",
+    "Unhealthy": "red"
+}
 st.subheader("EV Adoption vs Air Quality")
 
 fig = px.scatter(
+    color_discrete_map=color_map,
     filtered_df,
     x="ev_count",
     y="avg_aqi",
@@ -146,7 +158,13 @@ fig = px.scatter(
 )
 
 st.plotly_chart(fig, width="stretch")
+st.markdown("""
+### 🧠 Insight
 
+- There is a weak relationship between EV adoption and AQI  
+- Higher EV adoption does not directly reduce pollution  
+- Other factors like industry, traffic, and geography matter more  
+""")
 # -------------------------------
 # POLLUTED vs CLEAN
 # -------------------------------
@@ -228,3 +246,12 @@ fig_trend = px.line(
 )
 
 st.plotly_chart(fig_trend, width="stretch")
+st.markdown("""
+---
+
+## 📌 Why This Matters
+
+- Air pollution is a major issue in India  
+- EV adoption is growing but impact is still limited  
+- Policy and infrastructure improvements are needed  
+""")
